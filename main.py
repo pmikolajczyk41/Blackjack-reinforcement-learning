@@ -6,17 +6,19 @@ from policies.deterministic import DeterministicPolicy
 
 def play_sample(g):
     ginfo = g.play()
-    print(f'winner: {ginfo.winner}')
+    print(f'winner: {ginfo.winner.name}')
     print(f'### Player states ###')
     for s in ginfo.player_logs:
-        print(f'sum: {s.current_sum}\t\t'
-              f'opponent pts: {s.opponent_points}\t'
-              f'usable: {s.holds_usable_ace}')
+        print(f'sum: {s[0].current_sum}\t\t'
+              f'opponent pts: {s[0].opponent_points}\t'
+              f'usable: {s[0].holds_usable_ace}\n'
+              f'action: {s[1].name}')
     print(f'### Dealer states ###')
     for s in ginfo.dealer_logs:
-        print(f'sum: {s.current_sum}\t\t'
-              f'opponent pts: {s.opponent_points}\t'
-              f'usable: {s.holds_usable_ace}')
+        print(f'sum: {s[0].current_sum}\t\t'
+              f'opponent pts: {s[0].opponent_points}\t'
+              f'usable: {s[0].holds_usable_ace}\n'
+              f'action: {s[1].name}')
 
 
 if __name__ == '__main__':

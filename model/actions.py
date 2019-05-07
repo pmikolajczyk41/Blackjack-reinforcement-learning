@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class Action(Enum):
-    HIT = 0
-    STICK = 1
+    STICK = 0
+    HIT = 1

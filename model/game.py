@@ -28,13 +28,12 @@ class Game:
     def _play_stage(self, initial_state: State, policy: Policy, log_action: Callable) -> State:
         taken_action = None
         state = initial_state
-        log_action(state)
 
         while taken_action != Action.STICK and state != BUST:
             taken_action = policy.make_decision_in(state)
+            log_action(state, taken_action)
             if taken_action == Action.HIT:
                 state = state.move_with(self._deck.get_next_card())
-                log_action(state)
         return state
 
     def play(self) -> GameInfo:
