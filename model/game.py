@@ -38,12 +38,14 @@ class Game:
         return state
 
     def play(self) -> GameInfo:
+        player_cards = (self._deck.get_next_card(), self._deck.get_next_card())
+        dealer_card = self._deck.get_next_card()
+        return self.play_starting_in(State.from_deal(*player_cards, dealer_card))
+
+    def play_starting_in(self, initial_state: State) -> GameInfo:
         game_info = GameInfo()
 
-        player_cards = (self._deck.get_next_card(), self._deck.get_next_card())
-        dealer_cards = (self._deck.get_next_card(), self._deck.get_next_card())
-
-        player_state = self._play_stage(initial_state=State.from_deal(*player_cards, dealer_cards[0]),
+        player_state = self._play_stage(initial_state=initial_state,
                                         policy=self._player_policy,
                                         log_action=game_info.log_player)
 
@@ -51,6 +53,7 @@ class Game:
             game_info.set_winner(Winner.DEALER)
             return game_info
 
+        dealer_cards = (initial_state.opponent_points, self._deck.get_next_card())
         dealer_state = self._play_stage(initial_state=State.from_deal(*dealer_cards, player_state.current_sum),
                                         policy=self._dealer_policy,
                                         log_action=game_info.log_dealer)
