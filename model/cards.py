@@ -10,5 +10,8 @@ class Card(IntEnum):
     SEVEN = 7
     EIGHT = 8
     NINE = 9
-    FACE_CARD = 10
+    TEN = 10
+    JACK = 10
+    QUEEN = 10
+    KING = 10
     ACE = 11

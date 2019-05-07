@@ -5,7 +5,12 @@ from model.strategy import Strategy
 
 class DeterministicStrategy(Strategy):
     def make_decision_in(self, state: State) -> Action:
-        if state.holds_usable_ace:
+        if state.current_sum <= 11:
+            return Action.HIT
+        elif state.current_sum >= 21:
+            return Action.STICK
+
+        elif state.holds_usable_ace:
             if state.current_sum <= 17:
                 return Action.HIT
             if state.current_sum == 18 and state.opponent_points >= 9:

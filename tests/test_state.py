@@ -15,8 +15,8 @@ class TestState(TestCase):
         self.check_sum_of_deal(5, Card.TWO, Card.THREE)
         self.check_sum_of_deal(12, Card.ACE, Card.ACE)
         self.check_sum_of_deal(19, Card.EIGHT, Card.ACE)
-        self.check_sum_of_deal(21, Card.ACE, Card.FACE_CARD)
-        self.check_sum_of_deal(20, Card.FACE_CARD, Card.FACE_CARD)
+        self.check_sum_of_deal(21, Card.ACE, Card.TEN)
+        self.check_sum_of_deal(20, Card.TEN, Card.TEN)
 
     def check_sum(self, expected_sum: int, state: State):
         self.assertEqual(expected_sum, state.current_sum)
@@ -30,7 +30,7 @@ class TestState(TestCase):
 
     def test_moving_bust(self):
         state = State(17, blank, False)
-        self.assertEqual(BUST, state.move_with(Card.FACE_CARD))
+        self.assertEqual(BUST, state.move_with(Card.TEN))
 
     def test_moving_with_ace_no_bust(self):
         state = State(4, blank, True)
@@ -42,8 +42,8 @@ class TestState(TestCase):
 
     def test_moving_use_ace(self):
         state = State(17, blank, True)
-        self.check_sum(17, state.move_with(Card.FACE_CARD))
-        self.check_used_ace(state.move_with(Card.FACE_CARD))
+        self.check_sum(17, state.move_with(Card.TEN))
+        self.check_used_ace(state.move_with(Card.TEN))
 
     def test_blackjack_no_usable(self):
         state = State(21, blank, False)

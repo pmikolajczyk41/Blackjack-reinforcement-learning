@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List
 
 
 class Winner(Enum):
@@ -9,23 +10,27 @@ class Winner(Enum):
 
 class GameInfo:
     def __init__(self):
-        self.winner = None
+        self._winner = None
         self._player_logs = []
         self._dealer_logs = []
 
     @property
-    def player_logs(self):
+    def player_logs(self) -> List:
         return self._player_logs
 
     @property
-    def dealer_logs(self):
+    def dealer_logs(self) -> List:
         return self._dealer_logs
 
-    def log_player(self, state):
+    @property
+    def winner(self) -> Winner:
+        return self._winner
+
+    def log_player(self, state) -> None:
         self._player_logs.append(state)
 
-    def log_dealer(self, state):
+    def log_dealer(self, state) -> None:
         self._dealer_logs.append(state)
 
-    def set_winner(self, winner: Winner):
-        self.winner = winner
+    def set_winner(self, winner: Winner) -> None:
+        self._winner = winner
