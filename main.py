@@ -1,7 +1,7 @@
 from model.game import Game, Deck
 from model.game_info import Winner
-from strategies.dealer import DealerStrategy
-from strategies.deterministic import DeterministicStrategy
+from policies.dealer import DealerPolicy
+from policies.deterministic import DeterministicPolicy
 
 
 def play_sample(g):
@@ -20,8 +20,8 @@ def play_sample(g):
 
 
 if __name__ == '__main__':
-    g = Game(player_strategy=DeterministicStrategy(),
-             dealer_strategy=DealerStrategy(),
+    g = Game(player_policy=DeterministicPolicy(),
+             dealer_policy=DealerPolicy(),
              deck=Deck())
 
     # play_sample(g)

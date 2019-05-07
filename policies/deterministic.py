@@ -1,9 +1,9 @@
 from model.actions import Action
+from model.policy import Policy
 from model.state import State
-from model.strategy import Strategy
 
 
-class DeterministicStrategy(Strategy):
+class DeterministicPolicy(Policy):
     def make_decision_in(self, state: State) -> Action:
         if state.current_sum <= 11:
             return Action.HIT
