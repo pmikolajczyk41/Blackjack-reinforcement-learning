@@ -6,6 +6,7 @@ from model.cards import Card
 from model.game_info import GameInfo, Winner
 from model.policy import Policy
 from model.state import State, BUST
+from policies.dealer import DealerPolicy
 
 
 class Deck:
@@ -17,7 +18,9 @@ class Deck:
 
 
 class Game:
-    def __init__(self, player_policy: Policy, dealer_policy: Policy, deck: Deck):
+    def __init__(self, player_policy: Policy,
+                 dealer_policy: Policy = DealerPolicy(),
+                 deck: Deck = Deck()):
         self._player_policy = player_policy
         self._dealer_policy = dealer_policy
         self._deck = deck
