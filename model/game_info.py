@@ -1,3 +1,4 @@
+
 from enum import Enum
 
 
@@ -9,7 +10,7 @@ class Winner(Enum):
 
 class GameInfo:
     def __init__(self):
-        self.winner = None
+        self._winner = None
         self._player_logs = []
         self._dealer_logs = []
 
@@ -21,6 +22,10 @@ class GameInfo:
     def dealer_logs(self):
         return self._dealer_logs
 
+    @property
+    def winner(self):
+        return self._winner
+
     def log_player(self, state):
         self._player_logs.append(state)
 
@@ -28,4 +33,4 @@ class GameInfo:
         self._dealer_logs.append(state)
 
     def set_winner(self, winner: Winner):
-        self.winner = winner
+        self._winner = winner

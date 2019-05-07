@@ -25,13 +25,13 @@ class Game:
     def _play_stage(self, initial_state: State, strategy: Strategy, log_action: Callable) -> State:
         taken_action = None
         state = initial_state
+        log_action(state)
 
         while taken_action != Action.STICK and state != BUST:
-            log_action(state)
             taken_action = strategy.make_decision_in(state)
             if taken_action == Action.HIT:
                 state = state.move_with(self._deck.get_next_card())
-
+                log_action(state)
         return state
 
     def play(self) -> GameInfo:
