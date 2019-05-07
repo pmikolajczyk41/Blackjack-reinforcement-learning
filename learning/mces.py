@@ -8,7 +8,7 @@ from model.game import Game
 from model.game_info import GameInfo
 from model.policy import Policy
 from model.state import State
-from plotting import PolicyPlotter
+from plotting import DeterministicPolicyPlotter
 
 
 class StateActionPair:
@@ -77,4 +77,4 @@ class MonteCarloExploringStates:
 if __name__ == '__main__':
     MCES = MonteCarloExploringStates()
     MCES.train(10000)
-    PolicyPlotter().plot(MCES.policy)
+    DeterministicPolicyPlotter().plot(MCES.policy)
