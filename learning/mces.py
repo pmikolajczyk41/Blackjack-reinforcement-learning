@@ -27,10 +27,10 @@ class StateActionPair:
 
 class MonteCarloExploringStates:
     def __init__(self):
-        states = State.get_all_demanding_states()
+        states = State.get_all_states()
         saps = list(product(states, list(Action)))
 
-        self._pi = {state: np.random.choice(list(Action))
+        self._pi = {state: Action.HIT if state.current_sum < 20 else Action.STICK
                     for state in states}
         self._Q = {StateActionPair(state, action): 0.
                    for state, action in saps}
@@ -46,7 +46,10 @@ class MonteCarloExploringStates:
     def train(self, rounds=100000):
         for i in range(rounds):
             initial_state = self._choose_initial_state()
-            game = Game(player_policy=Policy.from_mapping(self._pi))
+            # safe, because of acyclic Markov Process
+            self._pi[initial_state] = np.random.choice(list(Action))
+
+            game = Game(player_policy=self.policy)
             game_info = game.play_starting_in(initial_state)
             self._update_with(game_info)
 
@@ -77,4 +80,4 @@ class MonteCarloExploringStates:
 if __name__ == '__main__':
     MCES = MonteCarloExploringStates()
     MCES.train(10000)
-    DeterministicPolicyPlotter().plot(MCES.policy)
+    DeterministicPolicyPlotter.plot(MCES.policy)

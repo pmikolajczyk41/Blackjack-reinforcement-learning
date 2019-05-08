@@ -15,3 +15,7 @@ class Card(IntEnum):
     QUEEN = 10
     KING = 10
     ACE = 11
+
+    @classmethod
+    def get_values(cls):
+        return range(2, 12)
