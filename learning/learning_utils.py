@@ -40,3 +40,12 @@ class Algorithm:
 
     def train(self, rounds: int) -> None:
         raise NotImplemented
+
+    def _update_counters_with(self, game_info):
+        reward = game_info.winner
+        for (state, action) in game_info.player_logs:
+            sap = StateActionPair(state, action)
+
+            self._visits[sap] += 1
+            self._total_return[sap] += reward
+            self._Q[sap] = self._total_return[sap] / self._visits[sap]

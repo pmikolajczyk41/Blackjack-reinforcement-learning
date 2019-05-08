@@ -4,7 +4,6 @@ from learning.learning_utils import *
 from model.actions import Action
 from model.cards import Card
 from model.game import Game
-from model.game_info import GameInfo
 from model.policy import Policy
 from model.state import State
 
@@ -35,18 +34,17 @@ class MonteCarloExploringStates(Algorithm):
                      opponent_points=np.random.choice(list(Card)),
                      holds_usable_ace=bool(np.random.randint(0, 2)))
 
-    def _update_with(self, game_info: GameInfo) -> None:
-        reward = game_info.winner
-        for (state, action) in game_info.player_logs:
-            sap = StateActionPair(state, action)
+    def _update_with(self, game_info):
+        self._update_counters_with(game_info)
+        self._update_policy_with(game_info)
 
-            self._visits[sap] += 1
-            self._total_return[sap] += reward
-            self._Q[sap] = self._total_return[sap] / self._visits[sap]
-
+    def _update_policy_with(self, game_info):
         for (state, _) in game_info.player_logs:
-            stick_action_value = self._Q[StateActionPair(state, Action.STICK)]
-            hit_action_value = self._Q[StateActionPair(state, Action.HIT)]
+            stick_sap = StateActionPair(state, Action.STICK)
+            hit_sap = StateActionPair(state, Action.HIT)
+
+            stick_action_value = self._Q[stick_sap]
+            hit_action_value = self._Q[hit_sap]
             if stick_action_value > hit_action_value:
                 self._pi[state] = Action.STICK
             else:
