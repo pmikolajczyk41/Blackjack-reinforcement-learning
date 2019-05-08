@@ -1,49 +1,25 @@
-from itertools import product
-
 import numpy as np
 
+from learning.learning_utils import *
 from model.actions import Action
 from model.cards import Card
 from model.game import Game
 from model.game_info import GameInfo
 from model.policy import Policy
 from model.state import State
-from plotting import DeterministicPolicyPlotter
 
 
-class StateActionPair:
-    def __init__(self, state: State, action: Action):
-        self.state = state
-        self.action = action
-
-    def __eq__(self, other):
-        if isinstance(other, StateActionPair):
-            return self.state == other.state and self.action == other.action
-        return False
-
-    def __hash__(self):
-        return hash(tuple(sorted(self.__dict__.items())))
-
-
-class MonteCarloExploringStates:
+class MonteCarloExploringStates(Algorithm):
     def __init__(self):
-        states = State.get_all_states()
-        saps = list(product(states, list(Action)))
-
+        super().__init__()
         self._pi = {state: Action.HIT if state.current_sum < 20 else Action.STICK
-                    for state in states}
-        self._Q = {StateActionPair(state, action): 0.
-                   for state, action in saps}
-        self._visits = {StateActionPair(state, action): 0
-                        for state, action in saps}
-        self._total_return = {StateActionPair(state, action): 0
-                              for state, action in saps}
+                    for state in ALL_STATES}
 
     @property
-    def policy(self):
-        return Policy.from_mapping(self._pi)
+    def policy(self) -> Policy:
+        return Policy.from_deterministic_mapping(self._pi)
 
-    def train(self, rounds=100000):
+    def train(self, rounds: int) -> None:
         for i in range(rounds):
             initial_state = self._choose_initial_state()
             # safe, because of acyclic Markov Process
@@ -75,9 +51,3 @@ class MonteCarloExploringStates:
                 self._pi[state] = Action.STICK
             else:
                 self._pi[state] = Action.HIT
-
-
-if __name__ == '__main__':
-    MCES = MonteCarloExploringStates()
-    MCES.train(10000)
-    DeterministicPolicyPlotter.plot(MCES.policy)
