@@ -4,8 +4,9 @@ from typing import Callable
 from model.actions import Action
 from model.cards import Card
 from model.game_info import GameInfo, Winner
+from model.policy import Policy
 from model.state import State, BUST
-from model.strategy import Strategy
+from policies.dealer import DealerPolicy
 
 
 class Deck:
@@ -17,39 +18,43 @@ class Deck:
 
 
 class Game:
-    def __init__(self, player_strategy: Strategy, dealer_strategy: Strategy, deck: Deck):
-        self._player_strategy = player_strategy
-        self._dealer_strategy = dealer_strategy
+    def __init__(self, player_policy: Policy,
+                 dealer_policy: Policy = DealerPolicy(),
+                 deck: Deck = Deck()):
+        self._player_policy = player_policy
+        self._dealer_policy = dealer_policy
         self._deck = deck
 
-    def _play_stage(self, initial_state: State, strategy: Strategy, log_action: Callable) -> State:
+    def _play_stage(self, initial_state: State, policy: Policy, log_action: Callable) -> State:
         taken_action = None
         state = initial_state
-        log_action(state)
 
         while taken_action != Action.STICK and state != BUST:
-            taken_action = strategy.make_decision_in(state)
+            taken_action = policy.make_decision_in(state)
+            log_action(state, taken_action)
             if taken_action == Action.HIT:
                 state = state.move_with(self._deck.get_next_card())
-                log_action(state)
         return state
 
     def play(self) -> GameInfo:
+        player_cards = (self._deck.get_next_card(), self._deck.get_next_card())
+        dealer_card = self._deck.get_next_card()
+        return self.play_starting_in(State.from_deal(*player_cards, dealer_card))
+
+    def play_starting_in(self, initial_state: State) -> GameInfo:
         game_info = GameInfo()
 
-        player_cards = (self._deck.get_next_card(), self._deck.get_next_card())
-        dealer_cards = (self._deck.get_next_card(), self._deck.get_next_card())
-
-        player_state = self._play_stage(initial_state=State.from_deal(*player_cards, dealer_cards[0]),
-                                        strategy=self._player_strategy,
+        player_state = self._play_stage(initial_state=initial_state,
+                                        policy=self._player_policy,
                                         log_action=game_info.log_player)
 
         if player_state == BUST:
             game_info.set_winner(Winner.DEALER)
             return game_info
 
+        dealer_cards = (initial_state.opponent_points, self._deck.get_next_card())
         dealer_state = self._play_stage(initial_state=State.from_deal(*dealer_cards, player_state.current_sum),
-                                        strategy=self._dealer_strategy,
+                                        policy=self._dealer_policy,
                                         log_action=game_info.log_dealer)
 
         if dealer_state == BUST:
