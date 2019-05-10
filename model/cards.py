@@ -1,4 +1,5 @@
 from enum import IntEnum
+from typing import List
 
 
 class Card(IntEnum):
@@ -17,5 +18,9 @@ class Card(IntEnum):
     ACE = 11
 
     @classmethod
-    def get_values(cls):
+    def get_values(cls) -> range:
         return range(2, 12)
+
+    @classmethod
+    def get_full_deck(cls) -> List:
+        return list(Card.__members__.values())

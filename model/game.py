@@ -11,7 +11,7 @@ from policies.dealer import DealerPolicy
 
 class Deck:
     def __init__(self):
-        self._deck = list(Card)
+        self._deck = Card.get_full_deck()
 
     def get_next_card(self) -> Card:
         return random.choice(self._deck)
