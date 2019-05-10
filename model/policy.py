@@ -43,3 +43,13 @@ class Policy:
             else:
                 mapping[s] = [exploring_prob(), 1. - exploring_prob()]
         return Policy.from_probabilistic_mapping(mapping)
+
+    @classmethod
+    def from_values(cls, values: dict):
+        mapping = dict()
+        for s in State.get_all_states():
+            if s.current_sum < 12: mapping[s] = Action.HIT
+            elif values[StateActionPair(s, Action.STICK)] > values[StateActionPair(s, Action.HIT)]:
+                mapping[s] = Action.STICK
+            else: mapping[s] = Action.HIT
+        return Policy.from_deterministic_mapping(mapping)
