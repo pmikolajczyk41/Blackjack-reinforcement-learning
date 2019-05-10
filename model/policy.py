@@ -2,9 +2,8 @@ from typing import Callable
 
 import numpy as np
 
-from learning.learning_utils import ALL_STATES, StateActionPair
 from model.actions import Action
-from model.state import State
+from model.state import State, StateActionPair
 
 
 class Policy:
@@ -38,7 +37,7 @@ class Policy:
     @classmethod
     def epsilon_greedy_from_values(cls, values: dict, exploring_prob: Callable):
         mapping = dict()
-        for s in ALL_STATES:
+        for s in State.get_all_states():
             if values[StateActionPair(s, Action.STICK)] > values[StateActionPair(s, Action.HIT)]:
                 mapping[s] = [1. - exploring_prob(), exploring_prob()]
             else:

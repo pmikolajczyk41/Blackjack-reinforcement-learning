@@ -5,7 +5,7 @@ from model.actions import Action
 from model.cards import Card
 from model.game import Game
 from model.policy import Policy
-from model.state import State
+from model.state import State, StateActionPair
 
 
 class MonteCarloExploringStates(MonteCarloAlgorithm):

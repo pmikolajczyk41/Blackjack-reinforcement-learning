@@ -1,6 +1,7 @@
 from itertools import product
 from typing import Union
 
+from model.actions import Action
 from model.cards import Card
 
 
@@ -66,4 +67,19 @@ class State:
                 for current_sum, opponent_points, holds_usable_ace
                 in product(range(2, 22), Card.get_values(), [True, False])]
 
+
 BUST = State(None, None, None)
+
+
+class StateActionPair:
+    def __init__(self, state: State, action: Action):
+        self.state = state
+        self.action = action
+
+    def __eq__(self, other):
+        if isinstance(other, StateActionPair):
+            return self.state == other.state and self.action == other.action
+        return False
+
+    def __hash__(self):
+        return hash(tuple(sorted(self.__dict__.items())))

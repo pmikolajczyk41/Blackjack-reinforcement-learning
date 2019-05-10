@@ -2,22 +2,7 @@ from itertools import product
 
 from model.actions import Action
 from model.policy import Policy
-from model.state import State
-
-
-class StateActionPair:
-    def __init__(self, state: State, action: Action):
-        self.state = state
-        self.action = action
-
-    def __eq__(self, other):
-        if isinstance(other, StateActionPair):
-            return self.state == other.state and self.action == other.action
-        return False
-
-    def __hash__(self):
-        return hash(tuple(sorted(self.__dict__.items())))
-
+from model.state import State, StateActionPair
 
 ALL_STATES = State.get_all_states()
 ALL_STATE_ACTION_PAIRS = [StateActionPair(s, a)
