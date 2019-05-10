@@ -2,7 +2,6 @@ from learning.learning_utils import Algorithm, StateActionPair, ALL_STATES
 from model.actions import Action
 from model.game import Game
 from model.policy import Policy
-from plotting.plotting import ProbabilisticPolicyPlotter
 
 
 class Sarsa(Algorithm):
@@ -23,9 +22,9 @@ class Sarsa(Algorithm):
         for i in range(rounds):
             game_info = Game(player_policy=self.policy).play()
             # can do offline due to the acyclic game
-            self._update_with(game_info)
+            self._update_with(game_info, i)
 
-    def _update_with(self, game_info):
+    def _update_with(self, game_info, round: int = 0):
         for (log, next_log) in zip(game_info.player_logs[:-1], game_info.player_logs[1:]):
             sap = StateActionPair(*log)
             next_sap = StateActionPair(*next_log)
@@ -34,7 +33,7 @@ class Sarsa(Algorithm):
         last_sap = StateActionPair(*(game_info.player_logs[-1]))
         self._Q[last_sap] += self._alpha * (game_info.winner - self._Q[last_sap])
 
-        self._update_policy_on_states([s for (s, _) in game_info.player_logs])
+        self._update_policy_on_states([s for (s, _) in game_info.player_logs], round)
 
     def _update_policy_on_states(self, states, denominator: int = 0):
         if denominator: exploring_prob = 1. / denominator
@@ -47,9 +46,3 @@ class Sarsa(Algorithm):
                 self._pi[s] = [1. - exploring_prob, exploring_prob]
             else:
                 self._pi[s] = [exploring_prob, 1. - exploring_prob]
-
-
-if __name__ == '__main__':
-    sarsa = Sarsa()
-    sarsa.train(100000)
-    ProbabilisticPolicyPlotter().plot(sarsa.policy)
