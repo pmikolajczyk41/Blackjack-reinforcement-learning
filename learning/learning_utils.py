@@ -35,11 +35,16 @@ class Algorithm:
 
     def __init__(self):
         self._Q = Algorithm._create_sap_unif_mapping(0.)
-        self._visits = Algorithm._create_sap_unif_mapping(0)
-        self._total_return = Algorithm._create_sap_unif_mapping(0)
 
     def train(self, rounds: int) -> None:
         raise NotImplemented
+
+
+class MonteCarloAlgorithm(Algorithm):
+    def __init__(self):
+        super().__init__()
+        self._visits = Algorithm._create_sap_unif_mapping(0)
+        self._total_return = Algorithm._create_sap_unif_mapping(0)
 
     def _update_counters_with(self, game_info):
         reward = game_info.winner

@@ -8,7 +8,7 @@ from model.policy import Policy
 from model.state import State
 
 
-class MonteCarloExploringStates(Algorithm):
+class MonteCarloExploringStates(MonteCarloAlgorithm):
     def __init__(self):
         super().__init__()
         self._pi = {state: Action.HIT if state.current_sum < 20 else Action.STICK

@@ -4,7 +4,7 @@ from model.game import Game
 from model.policy import Policy
 
 
-class MonteCarloOnPolicyFirstVisit(Algorithm):
+class MonteCarloOnPolicyFirstVisit(MonteCarloAlgorithm):
     def __init__(self, epsilon: float = 0.1):
         super().__init__()
         self._eps = epsilon
