@@ -1,7 +1,9 @@
+from typing import Callable
+
 import numpy as np
 
 from model.actions import Action
-from model.state import State
+from model.state import State, StateActionPair
 
 
 class Policy:
@@ -31,3 +33,13 @@ class Policy:
         setattr(policy, 'stick_certainty_in',
                 lambda state: mapping[state][Action.STICK.value])
         return policy
+
+    @classmethod
+    def epsilon_greedy_from_values(cls, values: dict, exploring_prob: Callable):
+        mapping = dict()
+        for s in State.get_all_states():
+            if values[StateActionPair(s, Action.STICK)] > values[StateActionPair(s, Action.HIT)]:
+                mapping[s] = [1. - exploring_prob(), exploring_prob()]
+            else:
+                mapping[s] = [exploring_prob(), 1. - exploring_prob()]
+        return Policy.from_probabilistic_mapping(mapping)

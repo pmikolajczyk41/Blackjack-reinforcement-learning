@@ -5,10 +5,10 @@ from model.actions import Action
 from model.cards import Card
 from model.game import Game
 from model.policy import Policy
-from model.state import State
+from model.state import State, StateActionPair
 
 
-class MonteCarloExploringStates(Algorithm):
+class MonteCarloExploringStates(MonteCarloAlgorithm):
     def __init__(self):
         super().__init__()
         self._pi = {state: Action.HIT if state.current_sum < 20 else Action.STICK

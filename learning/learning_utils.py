@@ -2,22 +2,7 @@ from itertools import product
 
 from model.actions import Action
 from model.policy import Policy
-from model.state import State
-
-
-class StateActionPair:
-    def __init__(self, state: State, action: Action):
-        self.state = state
-        self.action = action
-
-    def __eq__(self, other):
-        if isinstance(other, StateActionPair):
-            return self.state == other.state and self.action == other.action
-        return False
-
-    def __hash__(self):
-        return hash(tuple(sorted(self.__dict__.items())))
-
+from model.state import State, StateActionPair
 
 ALL_STATES = State.get_all_states()
 ALL_STATE_ACTION_PAIRS = [StateActionPair(s, a)
@@ -35,11 +20,16 @@ class Algorithm:
 
     def __init__(self):
         self._Q = Algorithm._create_sap_unif_mapping(0.)
-        self._visits = Algorithm._create_sap_unif_mapping(0)
-        self._total_return = Algorithm._create_sap_unif_mapping(0)
 
     def train(self, rounds: int) -> None:
         raise NotImplemented
+
+
+class MonteCarloAlgorithm(Algorithm):
+    def __init__(self):
+        super().__init__()
+        self._visits = Algorithm._create_sap_unif_mapping(0)
+        self._total_return = Algorithm._create_sap_unif_mapping(0)
 
     def _update_counters_with(self, game_info):
         reward = game_info.winner
