@@ -31,7 +31,7 @@ class MonteCarloExploringStates(MonteCarloAlgorithm):
     @staticmethod
     def _choose_initial_state():
         return State(current_sum=np.random.randint(12, 22),
-                     opponent_points=np.random.choice(list(Card)),
+                     opponent_points=np.random.choice(Card.get_full_deck()),
                      holds_usable_ace=bool(np.random.randint(0, 2)))
 
     def _update_with(self, game_info):
