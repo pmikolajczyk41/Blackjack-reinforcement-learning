@@ -1,6 +1,8 @@
+import time
 from collections import namedtuple
 from itertools import product
 
+from learning.learning_utils import Algorithm
 from learning.mc_es import MonteCarloExploringStates
 from learning.mc_on_policy_fv import MonteCarloOnPolicyFirstVisit
 from learning.qlearning import QLearning
@@ -8,6 +10,7 @@ from learning.sarsa import Sarsa
 from model.game import Game
 from model.game_info import Winner
 from model.policy import Policy
+from plotting.plotting import ProbabilisticPolicyPlotter, DeterministicPolicyPlotter
 from policies.dealer import DealerPolicy
 from policies.deterministic import DeterministicPolicy
 
@@ -15,9 +18,13 @@ GameStats = namedtuple('GameStats', ['wins', 'draws', 'losses'])
 
 GAME_RUNS = 10000
 EPOCHS = 50000
-ALPHAS = [0.001, 0.01, 0.1, 0.2, 0.5]
-GAMMAS = [0.5, 0.7, 0.9, 0.99]
+EPOCHS_MORE = 500000
+ALPHAS = [0.01, 0.1, 0.5]
+GAMMAS = [0.5, 0.9, 0.99]
 EPSILONS = [0.2, 0.1, 0.05]
+
+prob_policy_plotter = ProbabilisticPolicyPlotter()
+det_policy_plotter = DeterministicPolicyPlotter()
 
 
 def check_stats_of_policy(player_policy: Policy, dealer_policy: Policy = DealerPolicy()) -> GameStats:
@@ -34,39 +41,78 @@ def check_stats_of_policy(player_policy: Policy, dealer_policy: Policy = DealerP
                      draws=(GAME_RUNS - wins - losses) / GAME_RUNS)
 
 
+def train(alg: Algorithm, rounds: int) -> float:
+    start = time.time()
+    alg.train(rounds)
+    return time.time() - start
+
+
 def profile_mces():
-    mces = MonteCarloExploringStates()
-    mces.train(EPOCHS)
-    print(f'MonteCarloExploringStates:      {check_stats_of_policy(mces.policy)}')
+    def profile(epochs):
+        mces = MonteCarloExploringStates()
+        t = train(mces, epochs)
+
+        print(f'MonteCarloExploringStates ({epochs} epochs, {t:4.2f}s): '
+              f'{check_stats_of_policy(mces.policy)}')
+        det_policy_plotter.plot(mces.policy)
+
+    profile(EPOCHS)
+    profile(EPOCHS_MORE)
 
 
 def profile_mc_op_fv():
-    for eps in EPSILONS:
-        mcopfv = MonteCarloOnPolicyFirstVisit(epsilon=eps)
-        mcopfv.train(EPOCHS)
-        print(f'MonteCarloOnPolicyFirstVisit:   {check_stats_of_policy(mcopfv.policy)}\t\teps: {eps}')
+    def profile(epochs):
+        for eps in EPSILONS:
+            mcopfv = MonteCarloOnPolicyFirstVisit(epsilon=eps)
+            t = train(mcopfv, epochs)
+
+            print(f'MonteCarloOnPolicyFirstVisit ({epochs} epochs, {t:4.2f}s): '
+                  f'{check_stats_of_policy(mcopfv.policy)}\t\teps: {eps}')
+
+            prob_policy_plotter.plot(mcopfv.policy)
+
+    profile(EPOCHS)
+    profile(EPOCHS_MORE)
 
 
 def profile_sarsa():
-    for alp, gam in product(ALPHAS, GAMMAS):
-        sarsa = Sarsa(alpha=alp, gamma=gam)
-        sarsa.train(EPOCHS)
-        print(f'Sarsa:                          {check_stats_of_policy(sarsa.policy)}'
-              f'\t\talpha: {alp}\t\tgamma: {gam}')
+    def profile(epochs):
+        for alp, gam in product(ALPHAS, GAMMAS):
+            sarsa = Sarsa(alpha=alp, gamma=gam)
+            t = train(sarsa, epochs)
+            print(f'Sarsa ({epochs} epochs, {t:4.2f}s): '
+                  f'{check_stats_of_policy(sarsa.policy)}'
+                  f'\t\talpha: {alp}\t\tgamma: {gam}')
+
+            prob_policy_plotter.plot(sarsa.policy)
+
+    profile(EPOCHS)
+    profile(EPOCHS_MORE)
 
 
 def profile_qlearning():
-    for alp, gam in product(ALPHAS, GAMMAS):
-        ql = QLearning(alpha=alp, gamma=gam)
-        ql.train(EPOCHS)
-        print(f'QLearning:                      {check_stats_of_policy(ql.policy)}'
-              f'\t\talpha: {alp}\t\tgamma: {gam}')
+    def profile(epochs):
+        for alp, gam in product(ALPHAS, GAMMAS):
+            ql = QLearning(alpha=alp, gamma=gam)
+            t = train(ql, epochs)
+            print(f'QLearning ({epochs} epochs, {t:4.2f}s): '
+                  f'{check_stats_of_policy(ql.policy)}'
+                  f'\t\talpha: {alp}\t\tgamma: {gam}')
 
+            det_policy_plotter.plot(ql.policy)
+
+    profile(EPOCHS)
+    profile(EPOCHS_MORE)
+
+
+def profile_deterministic():
+    print(f'Deterministic policy: {check_stats_of_policy(DeterministicPolicy())}')
+    det_policy_plotter.plot(DeterministicPolicy())
 
 
 if __name__ == '__main__':
     print(20 * '#')
-    print(f'Deterministic policy:           {check_stats_of_policy(DeterministicPolicy())}')
+    profile_deterministic()
 
     print(20 * '#')
     profile_mces()
