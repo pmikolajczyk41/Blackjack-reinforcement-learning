@@ -18,7 +18,7 @@ GameStats = namedtuple('GameStats', ['wins', 'draws', 'losses'])
 
 GAME_RUNS = 10000
 EPOCHS = 50000
-EPOCHS_MORE = 500000
+EPOCHS_MORE = 2000000
 ALPHAS = [0.01, 0.1, 0.5]
 GAMMAS = [0.5, 0.9, 0.99]
 EPSILONS = [0.2, 0.1, 0.05]
@@ -101,7 +101,7 @@ def profile_qlearning():
 
             det_policy_plotter.plot(ql.policy)
 
-    profile(EPOCHS)
+    # profile(EPOCHS)
     profile(EPOCHS_MORE)
 
 
@@ -111,17 +111,17 @@ def profile_deterministic():
 
 
 if __name__ == '__main__':
-    print(20 * '#')
-    profile_deterministic()
+    # print(20 * '#')
+    # profile_deterministic()
+    #
+    # print(20 * '#')
+    # profile_mces()
+    #
+    # print(20 * '#')
+    # profile_mc_op_fv()
 
-    print(20 * '#')
-    profile_mces()
-
-    print(20 * '#')
-    profile_mc_op_fv()
-
-    print(20 * '#')
-    profile_sarsa()
+    # print(20 * '#')
+    # profile_sarsa()
 
     print(20 * '#')
     profile_qlearning()

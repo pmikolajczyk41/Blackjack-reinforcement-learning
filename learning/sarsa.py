@@ -22,7 +22,7 @@ class Sarsa(Algorithm):
         for i in range(rounds):
             game_info = Game(player_policy=self.policy).play()
             # can do offline due to the acyclic game
-            self._update_with(game_info, i)
+            self._update_with(game_info)
 
     def _update_with(self, game_info, round: int = 0):
         for (log, next_log) in zip(game_info.player_logs[:-1], game_info.player_logs[1:]):
